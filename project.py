@@ -1,13 +1,13 @@
 import numpy as np
 import collections
 from keras.callbacks import Callback
-const_size_max_word = 7
+WORD_SIZE = 7
 from keras.layers import Input, Embedding, LSTM, Dense, Dropout
 from keras.models import Model
 from keras import *
 import keras
 SIZE = 33
-const_size_of_matrix = 7*SIZE
+const_size_of_matrix = WORD_SIZE*SIZE
 ALPHABET = "aąbcćdeęfghijklłmnńoóprsśtuwyzźż "
 
 def count_word(word):
@@ -20,8 +20,8 @@ def count_word(word):
 
 def vectorise(word):
     word = word.lower()
-    if len(word) < 7:
-        word = word + " "*(7-len(word))
+    if len(word) < WORD_SIZE:
+        word = word + " "*(WORD_SIZE-len(word))
     letter_indices = [ALPHABET.find(c)- ALPHABET.find("a") for c in word]
     word_len = len(word)
     vector = []
@@ -30,7 +30,7 @@ def vectorise(word):
         letter[i] = 1
         vector += letter
     #Wyrownanie macierzy do rozmiaru 224 - dlugosc maxymalna dla slowa
-    for i in range(const_size_max_word - word_len):
+    for i in range(WORD_SIZE - word_len):
         letter = [0]*SIZE
         vector+=letter
     n = SIZE
@@ -60,8 +60,8 @@ def generate_array(file_name):
     i = 0
     for w in words:
         a = w.strip()
-        if len(a)<7:
-            a = a + " "*(7-len(a))
+        if len(a)<WORD_SIZE:
+            a = a + " "*(WORD_SIZE-len(a))
         words[i] = a
         i += 1
 
@@ -76,12 +76,11 @@ def generate_array7(file_name):
 
     words = [w.strip() for w in words]
 
-    n = 7
     vectors = [list(),list(),list(),list(),list(),list(),list()]
 
     for w in words:
         v = vectorise(w)
-        for i in range(0,n):
+        for i in range(0,WORD_SIZE):
             vectors[i].append(v[i])
 
     return np.asarray(vectors)
@@ -125,7 +124,7 @@ train_data_encoded = generate_array7("words_train.txt")
 
 trainIn = np.asarray(train_data[:])
 train_outs = []
-for i in range (0,7):
+for i in range (0,WORD_SIZE):
     train_outs.append(np.asarray(train_data_encoded[i][:]))
 
 n_features = SIZE
@@ -187,7 +186,7 @@ list_words = []
 prediction_vector = []
 for i in range (0,len(testIn)):
     #pobierz elementy z prediction
-    for j in range (0,7):
+    for j in range (0,WORD_SIZE):
         prediction_vector.append(predictions[j][i][:])
     predicted_word  = devectorise_v5(prediction_vector, len(words[word_counter]))
     if predicted_word in words :
