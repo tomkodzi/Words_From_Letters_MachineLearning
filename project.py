@@ -35,13 +35,8 @@ def vectorise(word):
         vector+=letter
     n = SIZE
     a = []
-    a.append(vector[:n])
-    a.append(vector[n:n*2])
-    a.append(vector[n*2:n*3])
-    a.append(vector[n*3:n*4])
-    a.append(vector[n*4:n*5])
-    a.append(vector[n*5:n*6])
-    a.append(vector[n*6:n*7])
+    for j in range (0,WORD_SIZE):
+        a.append(vector[n * j:n * (j + 1)])
     return np.array(a)
 def devectorise_v5(word_vector,length_input_word):
     word = ''
@@ -76,7 +71,10 @@ def generate_array7(file_name):
 
     words = [w.strip() for w in words]
 
-    vectors = [list(),list(),list(),list(),list(),list(),list()]
+    vectors = []
+
+    for i in range (0, WORD_SIZE):
+        vectors.append(list())
 
     for w in words:
         v = vectorise(w)
@@ -84,8 +82,6 @@ def generate_array7(file_name):
             vectors[i].append(v[i])
 
     return np.asarray(vectors)
-
-
 
 
 
@@ -135,12 +131,6 @@ n_epochs = 40
 n_dense_layer = 4
 
 main_input = Input(shape=(SIZE, ))
-
-#x = Embedding(output_dim=256, input_dim=1000, input_length=100)(main_input)
-
-# A LSTM will transform the vector sequence into a single vector,
-# containing information about the entire sequence
-#lstm_out = LSTM(SIZE,)(x)
 
 x = Dense(n_single_dense_size, activation='relu')(main_input)
 x = Dense(n_single_dense_size, activation='relu')(x)
